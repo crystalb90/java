@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Payment Calculator</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background-color: #f4f4f9; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h2 { color: #333; margin-top: 0; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #0056b3; }
+        .output-box { margin-top: 20px; padding: 15px; background: #e9ecef; border-radius: 4px; display: none; }
+        .output-item { margin-bottom: 8px; border-bottom: 1px solid #dee2e6; padding-bottom: 4px; }
+        .result-highlight { font-size: 1.2em; color: #28a745; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Loan Calculator</h2>
+    
+    <div class="form-group">
+        <label for="principal">Loan Amount ($)</label>
+        <input type="number" id="principal" placeholder="e.g. 10000" min="0">
+    </div>
+
+    <div class="form-group">
+        <label for="interest">Annual Interest Rate (%)</label>
+        <input type="number" id="interest" step="0.01" placeholder="e.g. 5.5" min="0">
+    </div>
+
+    <div class="form-group">
+        <label for="years">Loan Term (Years)</label>
+        <input type="number" id="years" placeholder="e.g. 5" min="1">
+    </div>
+
+    <button onclick="calculateLoan()">Calculate Payment</button>
+
+    <div id="output" class="output-box">
+        <h4>Loan Summary:</h4>
+        <div class="output-item">Principal: <span id="out-principal"></span></div>
+        <div class="output-item">Annual Rate: <span id="out-rate"></span>%</div>
+        <div class="output-item">Term: <span id="out-years"></span> years</div>
+        <div class="output-item result-highlight">Monthly Payment: <span id="out-payment"></span></div>
+    </div>
+</div>
+
+<script>
+function calculateLoan() {
+    // Get input items
+    const principal = parseFloat(document.getElementById('principal').value);
+    const annualRate = parseFloat(document.getElementById('interest').value);
+    const years = parseFloat(document.getElementById('years').value);
+    
+    // Validation
+    if (isNaN(principal) || isNaN(annualRate) || isNaN(years) || principal <= 0) {
+        alert("Please enter valid positive numbers for all fields.");
+        return;
+    }
+
+    // Calculation Logic
+    const monthlyRate = (annualRate / 100) / 12;
+    const numberOfPayments = years * 12;
+    
+    let monthlyPayment;
+    if (monthlyRate === 0) {
+        monthlyPayment = principal / numberOfPayments;
+    } else {
+        const x = Math.pow(1 + monthlyRate, numberOfPayments);
+        monthlyPayment = (principal * x * monthlyRate) / (x - 1);
+    }
+
+    // Display input items and result in the output section
+    document.getElementById('out-principal').innerText = "$" + principal.toLocaleString();
+    document.getElementById('out-rate').innerText = annualRate;
+    document.getElementById('out-years').innerText = years;
+    document.getElementById('out-payment').innerText = "$" + monthlyPayment.toFixed(2);
+    
+    document.getElementById('output').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
